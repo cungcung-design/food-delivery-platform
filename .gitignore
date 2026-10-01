@@ -13,3 +13,4 @@ backend/bin/
 
 .DS_Store
 Thumbs.db
+.neon
