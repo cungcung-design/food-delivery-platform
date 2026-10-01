@@ -2,6 +2,8 @@ package auth
 
 import (
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -101,16 +103,7 @@ func (h *Handler) Login(c *gin.Context) {
 }
 
 func (h *Handler) Logout(c *gin.Context) {
-	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie(
-		"access_token",
-		"",
-		-1,
-		"/",
-		"",
-		false,
-		true,
-	)
+	writeAuthCookie(c, "", 0)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Logged out.",
@@ -162,14 +155,20 @@ func (h *Handler) setAuthCookie(c *gin.Context, user db.User) {
 		return
 	}
 
-	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie(
-		"access_token",
-		token,
-		int(h.jwtExpiry.Seconds()),
-		"/",
-		"",
-		false,
-		true,
-	)
+	writeAuthCookie(c, token, int(h.jwtExpiry.Seconds()))
+}
+
+func writeAuthCookie(c *gin.Context, value string, maxAge int) {
+	parts := []string{
+		"access_token=" + value,
+		"Path=/",
+		"Max-Age=" + strconv.Itoa(maxAge),
+		"HttpOnly",
+	}
+	if strings.HasPrefix(c.GetHeader("Origin"), "https://") {
+		parts = append(parts, "Secure", "SameSite=None", "Partitioned")
+	} else {
+		parts = append(parts, "SameSite=Lax")
+	}
+	c.Writer.Header().Add("Set-Cookie", strings.Join(parts, "; "))
 }

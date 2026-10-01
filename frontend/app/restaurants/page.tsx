@@ -40,9 +40,6 @@ export default function RestaurantsPage() {
                 All restaurants
               </h2>
 
-              <p className="mt-1 text-sm text-zinc-500">
-                6 restaurants available
-              </p>
             </div>
 
             <RestaurantFilters />

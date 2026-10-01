@@ -9,7 +9,7 @@ interface RestaurantCardProps {
   id: string;
   name: string;
   category: string;
-  rating: number;
+  rating?: number;
   deliveryTime: string;
   deliveryFee: string;
 }
@@ -50,10 +50,12 @@ export function RestaurantCard({
               </p>
             </div>
 
-            <div className="flex items-center gap-1 rounded-lg bg-green-50 px-2 py-1 text-sm font-semibold text-green-700">
-              <Star className="size-3.5 fill-current" />
-              {rating}
-            </div>
+            {rating !== undefined && (
+              <div className="flex items-center gap-1 rounded-lg bg-green-50 px-2 py-1 text-sm font-semibold text-green-700">
+                <Star className="size-3.5 fill-current" />
+                {rating}
+              </div>
+            )}
           </div>
 
           <div className="mt-4 flex items-center gap-2 text-sm text-zinc-500">

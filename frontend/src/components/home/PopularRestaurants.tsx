@@ -1,37 +1,25 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
+import {
+  getRestaurants,
+  type Restaurant,
+} from "@/services/restaurants";
 import { RestaurantCard } from "./RestaurantCard";
 
-const restaurants = [
-  {
-    id: "burger-house",
-    name: "Burger House",
-    category: "Burgers • American",
-    rating: 4.8,
-    deliveryTime: "20–30 min",
-    deliveryFee: "RM 3 delivery",
-  },
-  {
-    id: "tokyo-bowl",
-    name: "Tokyo Bowl",
-    category: "Japanese • Asian",
-    rating: 4.7,
-    deliveryTime: "25–35 min",
-    deliveryFee: "RM 4 delivery",
-  },
-  {
-    id: "pizza-corner",
-    name: "Pizza Corner",
-    category: "Pizza • Italian",
-    rating: 4.9,
-    deliveryTime: "20–25 min",
-    deliveryFee: "Free delivery",
-  },
-];
-
 export function PopularRestaurants() {
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+
+  useEffect(() => {
+    getRestaurants()
+      .then((data) => setRestaurants((data.restaurants ?? []).slice(0, 3)))
+      .catch(() => setRestaurants([]));
+  }, []);
+
   return (
     <section className="bg-zinc-50 py-12 sm:py-16">
       <Container>
@@ -55,14 +43,24 @@ export function PopularRestaurants() {
           </Link>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {restaurants.map((restaurant) => (
-            <RestaurantCard
-              key={restaurant.id}
-              {...restaurant}
-            />
-          ))}
-        </div>
+        {restaurants.length === 0 ? (
+          <p className="text-sm text-zinc-500">
+            No restaurants are open yet.
+          </p>
+        ) : (
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {restaurants.map((restaurant) => (
+              <RestaurantCard
+                key={restaurant.id}
+                id={restaurant.id}
+                name={restaurant.name}
+                category={restaurant.city}
+                deliveryTime="20–30 min"
+                deliveryFee="RM 5 delivery"
+              />
+            ))}
+          </div>
+        )}
       </Container>
     </section>
   );

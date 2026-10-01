@@ -1,71 +1,67 @@
-import { RestaurantCard } from "@/components/home/RestaurantCard";
+"use client";
 
-const restaurants = [
-  {
-    id: "burger-house",
-    name: "Burger House",
-    category: "Burgers • American",
-    rating: 4.8,
-    deliveryTime: "20–30 min",
-    deliveryFee: "RM 3 delivery",
-  },
-  {
-    id: "tokyo-bowl",
-    name: "Tokyo Bowl",
-    category: "Japanese • Asian",
-    rating: 4.7,
-    deliveryTime: "25–35 min",
-    deliveryFee: "RM 4 delivery",
-  },
-  {
-    id: "pizza-corner",
-    name: "Pizza Corner",
-    category: "Pizza • Italian",
-    rating: 4.9,
-    deliveryTime: "20–25 min",
-    deliveryFee: "Free delivery",
-  },
-  {
-    id: "green-kitchen",
-    name: "Green Kitchen",
-    category: "Healthy • Salads",
-    rating: 4.6,
-    deliveryTime: "20–30 min",
-    deliveryFee: "RM 2 delivery",
-  },
-  {
-    id: "seoul-kitchen",
-    name: "Seoul Kitchen",
-    category: "Korean • Asian",
-    rating: 4.8,
-    deliveryTime: "30–40 min",
-    deliveryFee: "RM 4 delivery",
-  },
-  {
-    id: "sweet-corner",
-    name: "Sweet Corner",
-    category: "Desserts • Bakery",
-    rating: 4.7,
-    deliveryTime: "15–25 min",
-    deliveryFee: "RM 3 delivery",
-  },
-];
+import { useEffect, useState } from "react";
+
+import { RestaurantCard } from "@/components/home/RestaurantCard";
+import {
+  getRestaurants,
+  type Restaurant,
+} from "@/services/restaurants";
 
 export function RestaurantGrid() {
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getRestaurants()
+      .then((data) => setRestaurants(data.restaurants ?? []))
+      .catch((loadError) => {
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : "Could not load restaurants.",
+        );
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return <p className="text-sm text-zinc-500">Loading restaurants...</p>;
+  }
+
+  if (error) {
+    return <p className="text-sm text-red-600">{error}</p>;
+  }
+
+  if (restaurants.length === 0) {
+    return (
+      <p className="text-sm text-zinc-500">
+        No restaurants are open yet.
+      </p>
+    );
+  }
+
   return (
-    <div
-      className="
-        grid gap-5
-        sm:grid-cols-2
-        lg:grid-cols-3
-      "
-    >
-      {restaurants.map((restaurant) => (
-        <RestaurantCard
-          key={restaurant.id}
-          {...restaurant}
-        />
-      ))}
+    <div className="flex flex-col gap-5">
+      <p className="text-sm text-zinc-500">
+        {restaurants.length}{" "}
+        {restaurants.length === 1 ? "restaurant" : "restaurants"}{" "}
+        available
+      </p>
+
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {restaurants.map((restaurant) => (
+          <RestaurantCard
+            key={restaurant.id}
+            id={restaurant.id}
+            name={restaurant.name}
+            category={restaurant.city}
+            deliveryTime="20–30 min"
+            deliveryFee="RM 5 delivery"
+          />
+        ))}
+      </div>
     </div>
   );
 }
