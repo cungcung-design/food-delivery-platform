@@ -14,6 +14,24 @@ type deliveryJSON struct {
 	Total        string `json:"total"`
 }
 
+type completedDeliveryJSON struct {
+	ID             string `json:"id"`
+	OrderID        string `json:"order_id"`
+	Status         string `json:"status"`
+	RestaurantName string `json:"restaurant_name"`
+	PickupAddress  string `json:"pickup_address"`
+	Earning        string `json:"earning"`
+	OrderTotal     string `json:"order_total"`
+	DeliveredAt    string `json:"delivered_at"`
+}
+
+type earningsJSON struct {
+	CompletedCount int    `json:"completed_count"`
+	Total          string `json:"total"`
+	TodayCount     int    `json:"today_count"`
+	TodayTotal     string `json:"today_total"`
+}
+
 type pointJSON struct {
 	Latitude   float64 `json:"latitude"`
 	Longitude  float64 `json:"longitude"`

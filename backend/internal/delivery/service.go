@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -399,6 +400,55 @@ func (s *Service) one(ctx context.Context, item db.Delivery) (deliveryJSON, erro
 	}
 
 	return toDelivery(item, order), nil
+}
+
+func (s *Service) completedRows(ctx context.Context, userID string) ([]db.ListCompletedDeliveriesByDriverRow, error) {
+	driver, err := s.driverByUser(ctx, userID)
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			return []db.ListCompletedDeliveriesByDriverRow{}, nil
+		}
+		return nil, err
+	}
+
+	rows, err := s.queries.ListCompletedDeliveriesByDriver(ctx, driver.ID)
+	if err != nil {
+		return nil, err
+	}
+	if rows == nil {
+		return []db.ListCompletedDeliveriesByDriverRow{}, nil
+	}
+	return rows, nil
+}
+
+func (s *Service) History(ctx context.Context, userID string) ([]completedDeliveryJSON, error) {
+	rows, err := s.completedRows(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]completedDeliveryJSON, 0, len(rows))
+	for _, row := range rows {
+		out = append(out, completedDeliveryJSON{
+			ID:             row.ID.String(),
+			OrderID:        row.OrderID.String(),
+			Status:         row.Status,
+			RestaurantName: row.RestaurantName,
+			PickupAddress:  row.AddressLine + ", " + row.City,
+			Earning:        pgutil.Money(row.DeliveryFee),
+			OrderTotal:     pgutil.Money(row.Total),
+			DeliveredAt:    pgutil.Timestamp(row.DeliveredAt),
+		})
+	}
+	return out, nil
+}
+
+func (s *Service) Earnings(ctx context.Context, userID string) (earningsJSON, error) {
+	rows, err := s.completedRows(ctx, userID)
+	if err != nil {
+		return earningsJSON{}, err
+	}
+	return summarizeEarnings(rows, time.Now())
 }
 
 func (s *Service) toDeliveries(ctx context.Context, items []db.Delivery) ([]deliveryJSON, error) {

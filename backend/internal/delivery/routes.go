@@ -13,6 +13,8 @@ func RegisterRoutes(router *gin.Engine, handler *Handler, jwtSecret []byte) {
 		auth.RequireRole("DRIVER"),
 	)
 	driver.GET("/deliveries", handler.ListAvailable)
+	driver.GET("/history", handler.History)
+	driver.GET("/earnings", handler.Earnings)
 	driver.POST("/deliveries/:id/accept", handler.Accept)
 	driver.POST("/deliveries/:id/advance", handler.Advance)
 

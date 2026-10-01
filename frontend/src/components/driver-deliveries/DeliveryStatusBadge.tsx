@@ -13,6 +13,10 @@ const CONFIG: Record<string, { label: string; className: string }> = {
     label: "Available",
     className: "bg-zinc-100 text-zinc-600",
   },
+  DELIVERED: {
+    label: "Delivered",
+    className: "bg-green-50 text-green-700",
+  },
 };
 
 export function DeliveryStatusBadge({ status }: DeliveryStatusBadgeProps) {

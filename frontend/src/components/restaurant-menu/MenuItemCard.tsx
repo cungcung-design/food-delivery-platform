@@ -3,22 +3,13 @@
 import { UtensilsCrossed } from "lucide-react";
 
 import type { MenuItem } from "@/services/menu";
+import { formatMoney } from "@/lib/format";
 
 interface MenuItemCardProps {
   item: MenuItem;
   categoryName: string | undefined;
   isUpdating: boolean;
   onToggleAvailability: (item: MenuItem) => void;
-}
-
-function formatPrice(price: string): string {
-  const parsed = Number.parseFloat(price);
-
-  if (!Number.isFinite(parsed)) {
-    return price;
-  }
-
-  return `$${parsed.toFixed(2)}`;
 }
 
 export function MenuItemCard({
@@ -49,7 +40,7 @@ export function MenuItemCard({
           <h3 className="font-bold">{item.name}</h3>
 
           <span className="shrink-0 font-bold text-orange-600">
-            {formatPrice(item.price)}
+            {formatMoney(item.price)}
           </span>
         </div>
 

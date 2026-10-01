@@ -186,7 +186,7 @@ export function IncomingOrderCard({
                 <p className="text-xs text-zinc-500">Placed</p>
 
                 <p className="mt-1 font-semibold">
-                  {formatTimeAgo(order.created_at)} ago
+                  {formatTimeAgo(order.created_at)}
                 </p>
               </div>
             </div>

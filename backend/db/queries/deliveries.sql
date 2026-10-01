@@ -83,6 +83,25 @@ WHERE id = $1
 RETURNING *;
 
 
+-- name: ListCompletedDeliveriesByDriver :many
+SELECT
+    d.id,
+    d.order_id,
+    d.status,
+    d.delivered_at,
+    o.delivery_fee,
+    o.total,
+    r.name AS restaurant_name,
+    r.address_line,
+    r.city
+FROM deliveries d
+JOIN orders o ON o.id = d.order_id
+JOIN restaurants r ON r.id = o.restaurant_id
+WHERE d.driver_id = $1
+  AND d.status = 'DELIVERED'
+ORDER BY d.delivered_at DESC NULLS LAST, d.updated_at DESC;
+
+
 -- name: CancelDeliveryByOrder :exec
 UPDATE deliveries
 SET

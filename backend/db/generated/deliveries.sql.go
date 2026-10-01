@@ -203,6 +203,67 @@ func (q *Queries) GetDeliveryByOrderID(ctx context.Context, orderID pgtype.UUID)
 	return i, err
 }
 
+const listCompletedDeliveriesByDriver = `-- name: ListCompletedDeliveriesByDriver :many
+SELECT
+    d.id,
+    d.order_id,
+    d.status,
+    d.delivered_at,
+    o.delivery_fee,
+    o.total,
+    r.name AS restaurant_name,
+    r.address_line,
+    r.city
+FROM deliveries d
+JOIN orders o ON o.id = d.order_id
+JOIN restaurants r ON r.id = o.restaurant_id
+WHERE d.driver_id = $1
+  AND d.status = 'DELIVERED'
+ORDER BY d.delivered_at DESC NULLS LAST, d.updated_at DESC
+`
+
+type ListCompletedDeliveriesByDriverRow struct {
+	ID             pgtype.UUID
+	OrderID        pgtype.UUID
+	Status         string
+	DeliveredAt    pgtype.Timestamptz
+	DeliveryFee    pgtype.Numeric
+	Total          pgtype.Numeric
+	RestaurantName string
+	AddressLine    string
+	City           string
+}
+
+func (q *Queries) ListCompletedDeliveriesByDriver(ctx context.Context, driverID pgtype.UUID) ([]ListCompletedDeliveriesByDriverRow, error) {
+	rows, err := q.db.Query(ctx, listCompletedDeliveriesByDriver, driverID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListCompletedDeliveriesByDriverRow
+	for rows.Next() {
+		var i ListCompletedDeliveriesByDriverRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.OrderID,
+			&i.Status,
+			&i.DeliveredAt,
+			&i.DeliveryFee,
+			&i.Total,
+			&i.RestaurantName,
+			&i.AddressLine,
+			&i.City,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listDispatchableDeliveries = `-- name: ListDispatchableDeliveries :many
 SELECT id, order_id, driver_id, status, pickup_latitude, pickup_longitude, dropoff_latitude, dropoff_longitude, assigned_at, picked_up_at, delivered_at, created_at, updated_at
 FROM deliveries d

@@ -21,6 +21,26 @@ func NewHandler(service *Service, hub *tracking.Hub) *Handler {
 	return &Handler{service: service, hub: hub}
 }
 
+func (h *Handler) History(c *gin.Context) {
+	items, err := h.service.History(c.Request.Context(), c.MustGet("userID").(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Could not load delivery history."})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"deliveries": items})
+}
+
+func (h *Handler) Earnings(c *gin.Context) {
+	summary, err := h.service.Earnings(c.Request.Context(), c.MustGet("userID").(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Could not load earnings."})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"earnings": summary})
+}
+
 func (h *Handler) ListAvailable(c *gin.Context) {
 	items, err := h.service.ListAvailable(c.Request.Context(), c.MustGet("userID").(string))
 	if err != nil {

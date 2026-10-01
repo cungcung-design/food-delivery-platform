@@ -18,6 +18,24 @@ export type DeliveryJob = {
   total: string;
 };
 
+export type CompletedDelivery = {
+  id: string;
+  order_id: string;
+  status: string;
+  restaurant_name: string;
+  pickup_address: string;
+  earning: string;
+  order_total: string;
+  delivered_at: string;
+};
+
+export type DriverEarnings = {
+  completed_count: number;
+  total: string;
+  today_count: number;
+  today_total: string;
+};
+
 async function request(endpoint: string, options: RequestInit = {}) {
   const response = await fetch(`${API_URL}${endpoint}`, {
     credentials: "include",
@@ -69,6 +87,14 @@ export function setDriverLocation(
 
 export function getDeliveries(): Promise<{ deliveries: DeliveryJob[] }> {
   return request("/api/driver/deliveries");
+}
+
+export function getDriverHistory(): Promise<{ deliveries: CompletedDelivery[] }> {
+  return request("/api/driver/history");
+}
+
+export function getDriverEarnings(): Promise<{ earnings: DriverEarnings }> {
+  return request("/api/driver/earnings");
 }
 
 export function acceptDelivery(id: string): Promise<{ delivery: DeliveryJob }> {
