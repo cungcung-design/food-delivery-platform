@@ -18,7 +18,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path != "/health":
             self._send(404, {"message": "Not found."})
             return
-        self._send(200, {"status": "ok"})
+        self._send(200, {"status": "ok", "service": "ai-service"})
 
     def do_POST(self):
         if self.path != "/v1/plan":
@@ -120,7 +120,7 @@ def _plan(body: dict) -> tuple[int, dict]:
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "service": "ai-service"}
 
 
 @app.post("/v1/plan")
