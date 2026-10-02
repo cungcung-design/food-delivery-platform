@@ -27,7 +27,7 @@ export function restaurantMatchesCategory(
   name: string,
   category: string | null,
 ): boolean {
-  if (!category || category === "All" || !isBrowseCategory(category)) {
+  if (!isBrowseCategory(category) || category === "All") {
     return true;
   }
 
