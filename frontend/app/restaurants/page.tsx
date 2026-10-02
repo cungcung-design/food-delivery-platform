@@ -1,9 +1,14 @@
+import { Suspense } from "react";
+
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
 import { Container } from "@/components/ui/Container";
 
 import { CategoryFilters } from "@/components/restaurants/CategoryFilters";
 import { RestaurantFilters } from "@/components/restaurants/RestaurantFilters";
-import { RestaurantGrid } from "@/components/restaurants/RestaurantGrid";
+import {
+  RestaurantGrid,
+  RestaurantSectionTitle,
+} from "@/components/restaurants/RestaurantGrid";
 import { RestaurantSearch } from "@/components/restaurants/RestaurantSearch";
 
 export default function RestaurantsPage() {
@@ -32,20 +37,31 @@ export default function RestaurantsPage() {
 
       <Container className="py-7 sm:py-10">
         <div className="flex flex-col gap-5">
-          <CategoryFilters />
+          <Suspense>
+            <CategoryFilters />
+          </Suspense>
 
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="font-bold text-zinc-950">
-                All restaurants
-              </h2>
-
+              <Suspense
+                fallback={
+                  <h2 className="font-bold text-zinc-950">All restaurants</h2>
+                }
+              >
+                <RestaurantSectionTitle />
+              </Suspense>
             </div>
 
             <RestaurantFilters />
           </div>
 
-          <RestaurantGrid />
+          <Suspense
+            fallback={
+              <p className="text-sm text-zinc-500">Loading restaurants...</p>
+            }
+          >
+            <RestaurantGrid />
+          </Suspense>
         </div>
       </Container>
     </CustomerLayout>

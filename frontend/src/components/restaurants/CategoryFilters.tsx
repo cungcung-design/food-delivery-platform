@@ -1,29 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const categories = [
-  "All",
-  "Burgers",
-  "Pizza",
-  "Asian",
-  "Healthy",
-  "Desserts",
-  "Drinks",
-];
+import {
+  BROWSE_CATEGORIES,
+  isBrowseCategory,
+} from "@/lib/browse-categories";
 
 export function CategoryFilters() {
-  const [selected, setSelected] = useState("All");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const requested = searchParams.get("category");
+  const selected = isBrowseCategory(requested) ? requested : "All";
+
+  function selectCategory(category: string) {
+    const next = new URLSearchParams(searchParams.toString());
+
+    if (category === "All") {
+      next.delete("category");
+    } else {
+      next.set("category", category);
+    }
+
+    const query = next.toString();
+    router.push(query ? `/restaurants?${query}` : "/restaurants");
+  }
 
   return (
     <div className="flex gap-2 overflow-x-auto pb-2">
-      {categories.map((category) => {
+      {BROWSE_CATEGORIES.map((category) => {
         const active = selected === category;
 
         return (
           <button
             key={category}
-            onClick={() => setSelected(category)}
+            onClick={() => selectCategory(category)}
             className={`
               shrink-0 rounded-full px-4 py-2
               text-sm font-medium transition

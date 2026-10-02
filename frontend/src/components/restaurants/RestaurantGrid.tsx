@@ -1,14 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { RestaurantCard } from "@/components/home/RestaurantCard";
+import {
+  isBrowseCategory,
+  restaurantMatchesCategory,
+} from "@/lib/browse-categories";
 import {
   getRestaurants,
   type Restaurant,
 } from "@/services/restaurants";
 
+export function RestaurantSectionTitle() {
+  const requested = useSearchParams().get("category");
+  const title =
+    isBrowseCategory(requested) && requested !== "All"
+      ? requested
+      : "All restaurants";
+
+  return <h2 className="font-bold text-zinc-950">{title}</h2>;
+}
+
 export function RestaurantGrid() {
+  const requested = useSearchParams().get("category");
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -34,6 +50,10 @@ export function RestaurantGrid() {
     return <p className="text-sm text-red-600">{error}</p>;
   }
 
+  const visible = restaurants.filter((restaurant) =>
+    restaurantMatchesCategory(restaurant.name, requested),
+  );
+
   if (restaurants.length === 0) {
     return (
       <p className="text-sm text-zinc-500">
@@ -45,13 +65,18 @@ export function RestaurantGrid() {
   return (
     <div className="flex flex-col gap-5">
       <p className="text-sm text-zinc-500">
-        {restaurants.length}{" "}
-        {restaurants.length === 1 ? "restaurant" : "restaurants"}{" "}
+        {visible.length}{" "}
+        {visible.length === 1 ? "restaurant" : "restaurants"}{" "}
         available
       </p>
 
+      {visible.length === 0 ? (
+        <p className="text-sm text-zinc-500">
+          No restaurants in this category.
+        </p>
+      ) : (
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {restaurants.map((restaurant) => (
+        {visible.map((restaurant) => (
           <RestaurantCard
             key={restaurant.id}
             id={restaurant.id}
@@ -63,6 +88,7 @@ export function RestaurantGrid() {
           />
         ))}
       </div>
+      )}
     </div>
   );
 }

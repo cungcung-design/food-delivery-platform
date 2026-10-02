@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Container } from "@/components/ui/Container";
 
 const categories = [
@@ -27,8 +29,9 @@ export function FoodCategories() {
 
         <div className="flex gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 md:grid-cols-6 sm:overflow-visible">
           {categories.map((category) => (
-            <button
+            <Link
               key={category.name}
+              href={`/restaurants?category=${encodeURIComponent(category.name)}`}
               className="group flex min-w-28 flex-col items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-5 transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-md sm:min-w-0"
             >
               <span className="text-3xl transition group-hover:scale-110">
@@ -38,7 +41,7 @@ export function FoodCategories() {
               <span className="text-sm font-semibold">
                 {category.name}
               </span>
-            </button>
+            </Link>
           ))}
         </div>
       </Container>
