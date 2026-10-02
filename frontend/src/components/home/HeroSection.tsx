@@ -1,4 +1,4 @@
-import { MapPin, Search } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
@@ -32,6 +32,7 @@ export function HeroSection() {
 
                 <input
                   type="text"
+                  defaultValue="18 Jalan Bukit Bintang, Kuala Lumpur"
                   placeholder="Enter your delivery address"
                   className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none sm:text-base"
                 />
@@ -48,21 +49,34 @@ export function HeroSection() {
           </div>
 
           <div className="relative hidden lg:block">
-            <div className="aspect-square rounded-[2.5rem] bg-orange-100" />
+            <div className="relative aspect-square overflow-hidden rounded-[2.5rem] bg-orange-100">
+              {/* Photos are stored as external URLs, so the browser loads them directly. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=80"
+                alt=""
+                className="absolute inset-0 size-full object-cover"
+              />
+            </div>
 
             <div className="absolute bottom-8 left-0 rounded-2xl bg-white p-4 shadow-xl">
               <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-xl bg-orange-100">
-                  <Search className="size-5 text-orange-500" />
+                <div className="relative size-10 shrink-0 overflow-hidden rounded-xl bg-orange-100">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=200&q=80"
+                    alt=""
+                    className="absolute inset-0 size-full object-cover"
+                  />
                 </div>
 
                 <div>
                   <p className="text-sm font-semibold">
-                    100+ restaurants
+                    Pizza Corner
                   </p>
 
                   <p className="text-xs text-zinc-500">
-                    Ready to deliver
+                    Margherita · RM 24.00
                   </p>
                 </div>
               </div>
