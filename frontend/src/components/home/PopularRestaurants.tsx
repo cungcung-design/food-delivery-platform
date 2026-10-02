@@ -55,6 +55,7 @@ export function PopularRestaurants() {
                 id={restaurant.id}
                 name={restaurant.name}
                 category={restaurant.city}
+                imageUrl={restaurant.image_url}
                 deliveryTime="20–30 min"
                 deliveryFee="RM 5 delivery"
               />

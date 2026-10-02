@@ -8,6 +8,7 @@ interface MenuItemCardProps {
   name: string;
   description: string;
   price: string;
+  imageUrl?: string | null;
   available?: boolean;
   busy?: boolean;
   onAdd: () => void;
@@ -17,6 +18,7 @@ export function MenuItemCard({
   name,
   description,
   price,
+  imageUrl,
   available = true,
   busy = false,
   onAdd,
@@ -46,6 +48,15 @@ export function MenuItemCard({
       </div>
 
       <div className="relative size-28 shrink-0 overflow-hidden rounded-xl bg-zinc-100 sm:size-32">
+        {imageUrl && (
+          // Photos are stored as external URLs, so the browser loads them directly.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={imageUrl}
+            alt=""
+            className="absolute inset-0 size-full object-cover"
+          />
+        )}
         {available && (
           <button
             type="button"

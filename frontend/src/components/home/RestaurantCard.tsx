@@ -9,6 +9,7 @@ interface RestaurantCardProps {
   id: string;
   name: string;
   category: string;
+  imageUrl?: string | null;
   rating?: number;
   deliveryTime: string;
   deliveryFee: string;
@@ -18,6 +19,7 @@ export function RestaurantCard({
   id,
   name,
   category,
+  imageUrl,
   rating,
   deliveryTime,
   deliveryFee,
@@ -26,6 +28,15 @@ export function RestaurantCard({
     <Link href={`/restaurants/${id}`}>
       <article className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white transition hover:-translate-y-1 hover:shadow-lg">
         <div className="relative aspect-[16/10] bg-zinc-100">
+          {imageUrl && (
+            // Photos are stored as external URLs, so the browser loads them directly.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={imageUrl}
+              alt=""
+              className="absolute inset-0 size-full object-cover"
+            />
+          )}
           <button
             className="absolute right-3 top-3 flex size-10 items-center justify-center rounded-full bg-white/95 shadow-sm"
             aria-label={`Save ${name}`}

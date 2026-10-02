@@ -82,6 +82,7 @@ export function MenuSection({
             name={item.name}
             description={item.description ?? ""}
             price={item.price}
+            imageUrl={item.image_url}
             available={item.is_available}
             busy={busyId === item.id}
             onAdd={() => add(item)}

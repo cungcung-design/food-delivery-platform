@@ -32,7 +32,17 @@ export function RestaurantHero({
 
   return (
     <>
-      <div className="h-48 bg-zinc-200 sm:h-64 lg:h-80" />
+      <div className="relative h-48 overflow-hidden bg-zinc-200 sm:h-64 lg:h-80">
+        {restaurant.image_url && (
+          // Photos are stored as external URLs, so the browser loads them directly.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={restaurant.image_url}
+            alt=""
+            className="absolute inset-0 size-full object-cover"
+          />
+        )}
+      </div>
 
       <Container>
         <div className="relative -mt-10 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-7">
